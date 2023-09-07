@@ -1,10 +1,23 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
 buttons = [
-        [InlineKeyboardButton(text='найти объект по названию', callback_data='find_objectfrom_name'),
-        InlineKeyboardButton(text='найти объект по логину', callback_data='find_objectfrom_login'),]
-        ]
+        [
+            InlineKeyboardButton(
+                text='Фильтр по имени объекта', 
+                callback_data='filter_object_name',
+                ),
+        ],
+        [
+            InlineKeyboardButton(
+                text='Фильтр по клиенту', 
+                callback_data='filter_from_client'
+                ),
+        ],
 
-view_data_keyboard = InlineKeyboardMarkup(inline_keyboard=buttons, row_width=1)
+    ]
+
+view_data_keyboard = InlineKeyboardMarkup(
+        inline_keyboard=buttons,
+        resize_keyboard=True,
+        )

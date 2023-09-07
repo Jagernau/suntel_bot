@@ -10,7 +10,7 @@ from aiogram import types
 from aiogram.fsm.state import State, StatesGroup
 from database import crud
 from datetime import datetime
-from buttons import field_buttons, low_first_menu 
+from buttons import field_buttons, low_first_menu, view_data_menu
 #Set up logging
 
 # Set up the bot and dispatcher
@@ -23,6 +23,18 @@ class UserState(StatesGroup):
     USER_ROLE = State()
 
 
+class LowtMenu(StatesGroup):
+    FIRST_MENU = State()
+    SECOND_MENU = State()
+    THIRD_MENU = State()
+
+class TypeMenu(StatesGroup):
+    VIEW_TYPE = State()
+    UPDATE_TYPE = State()
+    ADD_TYPE = State()
+    DELETE_TYPE = State()
+
+
 @router.message(CommandStart())
 async def start(message: types.Message, state: FSMContext):
     await state.set_state(UserState.USER_TOKEN)
@@ -31,9 +43,10 @@ async def start(message: types.Message, state: FSMContext):
 @router.message(UserState.USER_TOKEN)
 async def auth(message: types.Message, state: FSMContext):
     # Check if the token exists in the database
-    user_token = crud.get_token(token=message.text)
+    user_token = crud.get_token(token=str(message.text))
     if user_token:
         user = crud.get_access(token=user_token)
+        await state.set_state(LowtMenu.FIRST_MENU)
         await state.update_data(user_name=user.username)
         await state.update_data(user_token=user_token)
         await state.update_data(user_role=user.is_superuser)
@@ -41,9 +54,21 @@ async def auth(message: types.Message, state: FSMContext):
     else:
         await message.answer('Такого токена нет. Попробуйте еще раз.')
 
+@router.message(F.text=='Посмотреть данные')
+async def admin_menu(message: types.Message, state: FSMContext):
+    await state.clear()
+        #await state.set_state(TypeMenu.VIEW_TYPE)
+    await message.answer(
+            'Вы выбрали: смотреть данные', 
+            reply_markup=view_data_menu.view_data_admin
+            )
 
-
-
+@router.message(F.text=='Найти где находится объект')
+async def view_data(message: types.Message, state: FSMContext):
+    await message.answer(
+            'Выберите по каким параметрам искать объект',
+            reply_markup=field_buttons.view_data_keyboard
+            )
 
 async def main():
     bot = Bot(token=str(TOKEN), parse_mode=ParseMode.HTML)
