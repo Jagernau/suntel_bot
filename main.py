@@ -57,7 +57,6 @@ async def auth(message: types.Message, state: FSMContext):
 @router.message(F.text=='Посмотреть данные')
 async def admin_menu(message: types.Message, state: FSMContext):
     await state.clear()
-        #await state.set_state(TypeMenu.VIEW_TYPE)
     await message.answer(
             'Вы выбрали: смотреть данные', 
             reply_markup=view_data_menu.view_data_admin
@@ -65,10 +64,38 @@ async def admin_menu(message: types.Message, state: FSMContext):
 
 @router.message(F.text=='Найти где находится объект')
 async def view_data(message: types.Message, state: FSMContext):
+    await state.clear()
     await message.answer(
             'Выберите по каким параметрам искать объект',
             reply_markup=field_buttons.view_data_keyboard
             )
+
+@router.callback_query(F.data.startswith('filter_'))
+async def filter_data(callback_query: types.CallbackQuery, state: FSMContext):
+    user_data = callback_query.data.split('_')[2]
+    if user_data == "name":
+        await state.update_data(filter_name=str(user_data))
+        await state.set_state(TypeMenu.VIEW_TYPE)
+        await callback_query.answer('Вы выбрали фильтр по имени объекта')
+    elif user_data == "client":
+        await state.update_data(filter_client=str(user_data))
+        await state.set_state(TypeMenu.VIEW_TYPE)
+        await callback_query.answer('Вы выбрали фильтр по клиенту')
+
+@router.message(TypeMenu.VIEW_TYPE)
+async def view_type(message: types.Message, state: FSMContext):
+    state_data = await state.get_data()
+    if state_data.get('filter_name') == "name":
+        await state.update_data(filter_client=str(message.text))
+        await message.answer(str(state_data.keys()))
+    elif state_data.get('filter_client') == "client":
+        await state.update_data(filter_client=str(message.text))
+        await message.answer(str(state_data.keys()))
+    elif state_data.get('filter_name') == "name" and state_data.get('filter_client') == "client":
+        await message.answer(str(state_data.keys()))
+        await state.clear()
+    
+
 
 async def main():
     bot = Bot(token=str(TOKEN), parse_mode=ParseMode.HTML)
