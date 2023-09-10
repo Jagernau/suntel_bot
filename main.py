@@ -85,13 +85,16 @@ async def filter_data(callback_query: types.CallbackQuery, state: FSMContext):
 @router.message(TypeMenu.VIEW_TYPE)
 async def view_type(message: types.Message, state: FSMContext):
     state_data = await state.get_data()
-    if state_data.get('filter_name') == "name":
+    if state_data.get('filter_name') is not None:
+        await state.update_data(filter_name=str(message.text))
+        results = crud.get_data_from_object(object_enter=str(message.text))
+        await message.answer(f"{results[0].object} {results[2].name}")
+
+
+    elif state_data.get('filter_client') is not None:
         await state.update_data(filter_client=str(message.text))
-        await message.answer(str(state_data.keys()))
-    elif state_data.get('filter_client') == "client":
-        await state.update_data(filter_client=str(message.text))
-        await message.answer(str(state_data.keys()))
-    elif state_data.get('filter_name') == "name" and state_data.get('filter_client') == "client":
+        #await message.answer(str(results))
+    elif state_data.get('filter_name') is not None and state_data.get('filter_client') is not None:
         await message.answer(str(state_data.keys()))
         await state.clear()
     

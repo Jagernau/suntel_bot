@@ -12,9 +12,6 @@ class Tdata(Database.BASE):
     isactive = Column(String, nullable=True)
     dimport = Column(DateTime, nullable=True)
 
-    def __str__(self):
-        return self.object
-
 class Temail(Database.BASE):
     __tablename__ = 'temail'
     id = Column(BigInteger, primary_key=True, autoincrement=True)
@@ -22,9 +19,6 @@ class Temail(Database.BASE):
     name = Column(String, nullable=True)
     inn = Column(String, nullable=True)
     kpp = Column(String, nullable=True)
-
-    def __str__(self):
-        return self.email
 
 class Tklient(Database.BASE):
     __tablename__ = 'tklient'
@@ -36,9 +30,6 @@ class Tklient(Database.BASE):
     kpp = Column(String, nullable=True)
     tarif = Column(Float(precision=2), nullable=True)
 
-    def __str__(self):
-        return self.name
-
 class Ttarif(Database.BASE):
     __tablename__ = 'ttarif'
     id = Column(BigInteger, primary_key=True, autoincrement=True)
@@ -47,9 +38,6 @@ class Ttarif(Database.BASE):
     dbeg = Column(DateTime, nullable=True)
     dend = Column(DateTime, nullable=True)
 
-    def __str__(self):
-        return str(self.tkid)
-
 class Twialon100(Database.BASE):
     __tablename__ = 'twialon100'
     id = Column(BigInteger, primary_key=True, autoincrement=True)
@@ -57,9 +45,6 @@ class Twialon100(Database.BASE):
     login = Column(String, nullable=True)
     logintd = Column(String, nullable=True)
     tkid = Column(BigInteger, nullable=True)
-
-    def __str__(self):
-        return self.login
 
 class AuthtokenToken(Database.BASE):
     __tablename__ = 'authtoken_token'
@@ -82,3 +67,17 @@ class AuthUser(Database.BASE):
     is_active = Column(Boolean, nullable=False)
     date_joined = Column(DateTime, nullable=False)
 
+
+class Tagat(Database.BASE):
+    __tablename__ = 'tagat'
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    object = Column(String, nullable=True)
+    idobject = Column(String, nullable=True)
+    shortname = Column(String, nullable=True)
+    inn = Column(String, nullable=True)
+    tarif = Column(Float(precision=2), nullable=True)
+    idsystem = Column(Integer, nullable=True)
+    kpp = Column(String, nullable=True)
+    name = Column(String, nullable=True)
+    dbeg = Column(DateTime, nullable=True)
+    dend = Column(DateTime, nullable=True)
